@@ -1,0 +1,20 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+spec:
+  project: system # 새로 만든 프로젝트 입니다
+  source:
+    repoURL: https://kubernetes-sigs.github.io/metrics-server
+    targetRevision: "3.12.2"
+    chart: metrics-server
+    helm:
+      valuesObject:
+        args:
+          - --metric-resolution=30s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated: {}
