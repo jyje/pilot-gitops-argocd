@@ -1,0 +1,24 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metrics-server
+spec:
+  project: system
+  source:
+    repoURL: https://github.com/jyje/pilot-gitops-argocd.git
+    targetRevision: main
+    path: helm/metrics-server-3.12.2
+    helm:
+      # 우선순위 'parameters > valuesObject > values > valueFiles > helm repository values.yaml'
+      # https://argo-cd.readthedocs.io/en/stable/user-guide/helm/#helm-value-precedence
+      valueFiles:
+        - values.yaml
+      valuesObject:
+        args:
+          - --metric-resolution=30s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated: {}
